@@ -31,15 +31,15 @@ defmodule K8s.Discovery do
   def api_paths(cluster_name, defaults \\ []) do
     {:ok, conf} = Cluster.conf(cluster_name)
     timeout = K8s.Config.discovery_http_timeout(cluster_name)
-    api_url = Path.join(conf.url, "/api")
-    apis_url = Path.join(conf.url, "/apis")
+    api_url = "#{conf.url}/api/"
+    apis_url = "#{conf.url}/apis/"
     opts = Keyword.merge([recv_timeout: timeout], defaults)
 
     with {:ok, api} <- do_run(api_url, conf, opts),
          {:ok, apis} <- do_run(apis_url, conf, opts) do
       %{
-        "/api" => api["versions"],
-        "/apis" => group_versions(apis["groups"])
+        "/api/" => api["versions"],
+        "/apis/" => group_versions(apis["groups"])
       }
     else
       error -> error
@@ -81,7 +81,9 @@ defmodule K8s.Discovery do
         headers = K8s.http_provider().headers(request_options)
         opts = Keyword.merge([ssl: request_options.ssl_options], opts)
 
-        K8s.http_provider().request(:get, url, "", headers, opts)
+        IO.puts("URL: #{url}")
+        {:ok, resp} = K8s.http_provider().request(:get, url, "", headers, opts)
+        IO.puts("Body: #{inspect(resp)}")
 
       error ->
         error

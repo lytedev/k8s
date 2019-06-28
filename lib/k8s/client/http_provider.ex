@@ -55,6 +55,7 @@ defmodule K8s.Client.HTTPProvider do
         {:error, :unauthorized}
 
       {:ok, %HTTPoison.Response{status_code: 404}} ->
+        IO.puts("WTF: #{inspect(resp)}")
         {:error, :not_found}
 
       {:ok, %HTTPoison.Response{status_code: code} = resp} when code in 400..599 ->

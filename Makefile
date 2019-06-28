@@ -47,3 +47,18 @@ analyze: ## Run dialyzer
 
 get/%: ## Add a new swagger spec to the test suite
 	curl -sSL https://raw.githubusercontent.com/kubernetes/kubernetes/release-$*/api/openapi-spec/swagger.json -o test/support/swagger/$*.json
+
+
+guard-%: # Creates an environment variable requirement by setting a prereq of guard-YOUR_ENV_VAR
+	@ if [ -z '${${*}}' ]; then \
+		echo "Environment variable $* not set"; \
+		exit 1;\
+	fi
+
+prism: prism.start
+prism.start: guard-K8S_VERSION prism.stop
+	docker run --name=k8s-${K8S_VERSION} -d -p 4010:4010 -v $(shell pwd)/test/support/swagger/:/swagger/ -P stoplight/prism:3 mock -h 0.0.0.0 /swagger/${K8S_VERSION}.json
+
+prism.stop: guard-K8S_VERSION
+	-docker kill k8s-${K8S_VERSION}
+	-docker rm k8s-${K8S_VERSION}

@@ -6,6 +6,10 @@ clusters:
   name: insecure-cluster
 - cluster:
     insecure-skip-tls-verify: true
+    server: http://0.0.0.0:4010
+  name: prism
+- cluster:
+    insecure-skip-tls-verify: true
     server: https://localhost:6443
   name: docker-for-desktop-cluster
 - cluster:
@@ -17,6 +21,10 @@ clusters:
     server: https://123.123.123.123
   name: cluster-with-cert-data
 contexts:
+- context:
+    cluster: prism
+    user: token-user
+  name: cluster-routing-tests
 - context:
     cluster: docker-for-desktop-cluster
     user: docker-for-desktop
