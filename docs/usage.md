@@ -10,7 +10,7 @@ Kubernetes API resources are auto-discovered at boot time. This library is curre
 
 ### Registering Clusters at Run Time
 
-The below will register a cluster named `:prod` using `~/.kube.config` to connect. There are many options for loading a config, this will load the user and cluster from the `current-context`.
+The below will register a cluster named `:prod` using `~/.kube/config` to connect. There are many options for loading a config, this will load the user and cluster from the `current-context`.
 
 ```elixir
 conn = K8s.Conn.from_file("~/.kube/config")
